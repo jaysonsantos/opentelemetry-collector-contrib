@@ -1208,6 +1208,27 @@ func Test_e2e_converters(t *testing.T) {
 				attributes.AppendEmpty().SetStr("foo")
 			},
 		},
+		{
+			statement: `set(attributes["list"], Filter(Keys({"foo": "bar", "baz": "foo"}), "value == \"foo\""))`,
+			want: func(tCtx ottllog.TransformContext) {
+				attributes := tCtx.GetLogRecord().Attributes().PutEmptySlice("list")
+				attributes.AppendEmpty().SetStr("foo")
+			},
+		},
+		{
+			statement: `set(attributes["list"], Filter([0, 1, 2, 2, 3, 2], "value == 2"))`,
+			want: func(tCtx ottllog.TransformContext) {
+				attributes := tCtx.GetLogRecord().Attributes().PutEmptySlice("list")
+				_ = attributes.FromRaw([]any{2, 2, 2})
+			},
+		},
+		{
+			statement: `set(attributes["list"], Filter(["a", "ab"], "Len(value) == 2"))`,
+			want: func(tCtx ottllog.TransformContext) {
+				attributes := tCtx.GetLogRecord().Attributes().PutEmptySlice("list")
+				_ = attributes.FromRaw([]any{"ab"})
+			},
+		},
 	}
 
 	for _, tt := range tests {
