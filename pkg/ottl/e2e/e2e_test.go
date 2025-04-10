@@ -1229,6 +1229,13 @@ func Test_e2e_converters(t *testing.T) {
 				_ = attributes.FromRaw([]any{"ab"})
 			},
 		},
+		{
+			statement: `set(attributes["list"], Values({"a": "b"}))`,
+			want: func(tCtx ottllog.TransformContext) {
+				attributes := tCtx.GetLogRecord().Attributes().PutEmptySlice("list")
+				_ = attributes.FromRaw([]any{"b"})
+			},
+		},
 	}
 
 	for _, tt := range tests {

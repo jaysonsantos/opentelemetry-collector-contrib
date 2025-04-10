@@ -116,5 +116,6 @@ func converters[K any]() []ottl.Factory[K] {
 		NewSliceToMapFactory[K](),
 		NewKeysFactory[K](),
 		NewFilterFactory[K](),
+		NewValuesFactory[K](),
 	}
 }
